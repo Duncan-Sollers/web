@@ -1,0 +1,16 @@
+How to download and install vcpkg for resolving third party conflicts
+
+ Clone the repository
+ 0)
+    Clone the repo -- OrgName/RepoName into your repos
+
+ 1) build vcpkg
+      cd vcpkg
+      .\bootstrap-vcpkg.bat
+
+ 2) run it's integration with visual studio
+      .\vcpkg integrate install
+
+3) install the 3PP
+      .\vcpkg install <package-name>
+

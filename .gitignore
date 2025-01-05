@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+/.vs/web
+/common/x64/Debug
+/httpClient/x64/Debug
+/httpServer/x64/Debug
+/x64/Debug
