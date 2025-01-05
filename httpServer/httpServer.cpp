@@ -5,9 +5,13 @@
 
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 #pragma comment(lib, "Ws2_32.lib")
-
+void processRequest(SOCKET ClientSocket);
+std::string readfile();
 
 int main(int argc, char* argv[]) {
   CommandLineOpts opts{argc, argv};  // initialize opts
@@ -15,8 +19,6 @@ int main(int argc, char* argv[]) {
   parseCommandLineOption(opts);
 
   WinNetSetup wns;
-
-  #define DEFAULT_PORT "27015"
   //set up server socket
   struct addrinfo *result = nullptr, *ptr = nullptr, hints;
 
@@ -67,6 +69,8 @@ int main(int argc, char* argv[]) {
     closesocket(ListenSocket);
     exit(EXIT_FAILURE);
   }
+  for (;;) {
+  
 
   SOCKET ClientSocket;
 
@@ -79,39 +83,70 @@ int main(int argc, char* argv[]) {
     closesocket(ListenSocket);
     exit(EXIT_FAILURE);
   }
+  // Lambda to invoke processRequest
+  auto invokeProcessRequest = [](SOCKET socket) { processRequest(socket); };
 
-  #define DEFAULT_BUFLEN 512
+  // Example usage of the lambda
+    invokeProcessRequest(ClientSocket);
+  }
+  message();
+}
+
+
+
+void processRequest(SOCKET ClientSocket) {
+#define DEFAULT_BUFLEN 2048
 
   char recvbuf[DEFAULT_BUFLEN];
   int iSendResult;
   int recvbuflen = DEFAULT_BUFLEN;
 
   // Receive until the peer shuts down the connection
-  do {
+  int iResult;
+  //do {
     iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
     if (iResult > 0) {
       printf("Bytes received: %d\n", iResult);
-
-      // Echo the buffer back to the sender
-      iSendResult = send(ClientSocket, recvbuf, iResult, 0);
-      if (iSendResult == SOCKET_ERROR) {
-        printf("send failed: %d\n", WSAGetLastError());
-        closesocket(ClientSocket);
-        WSACleanup();
-        return 1;
-      }
-      printf("Bytes sent: %d\n", iSendResult);
     } else if (iResult == 0)
       printf("Connection closing...\n");
     else {
       printf("recv failed: %d\n", WSAGetLastError());
       closesocket(ClientSocket);
-      WSACleanup();
-      return 1;
+      exit(EXIT_FAILURE);
     }
 
-  } while (iResult > 0);
-  for (;;)
-  message();
-  exit(EXIT_SUCCESS);
+  //} while (iResult > 0);
+  // Echo the buffer back to the sender
+    std::string str = readfile();
+    //std::string str = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\nContent-Length: 19\r\n\r\n<title>Hello,World!\r\n";
+    int size = str.size();
+    iSendResult = send(ClientSocket, str.c_str(), str.size(), 0);
+
+  if (iSendResult == SOCKET_ERROR) {
+    printf("send failed: %d\n", WSAGetLastError());
+    closesocket(ClientSocket);
+    exit(EXIT_FAILURE);
+  }
+  printf("Bytes sent: %d\n", iSendResult);
+  closesocket(ClientSocket);
+}
+
+std::string readfile() { 
+  std::fstream file("test.txt");
+  std::string line;
+  std::string result;
+  int i = 0;
+  while (getline(file, line)) {
+    i++;
+    if (i == 3) {
+      result += line + "\r\n" + "\r\n";
+    } else if(i<3){
+      result += line + "\r\n";
+    } else {
+      result += line;
+    }
+    
+  }
+
+  return result;
 }

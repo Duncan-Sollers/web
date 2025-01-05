@@ -1,1 +1,17 @@
-helloworld from file
+HTTP/1.0 200 OK
+Content-Type: text/html
+Content-Length: 428
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple HTML Page</title>
+</head>
+<body>
+    <h1>This is a webpage apparently?</h1>
+    <p>lol image.</p>
+	<img src="https://vignette.wikia.nocookie.net/nonnontv/images/a/ab/Natsumi_f01.png/revision/latest?cb=20131217092754" alt="natsumikoshigaya">
+</body>
+</html>

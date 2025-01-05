@@ -13,7 +13,7 @@
 const char* DEFAULT_PORT = "31415";
 const char* DEFAULT_SERVER = "localhost";
 
-void message() { std::cout << " Hello World! " << std::endl; }
+void message() { std::cout << "Terminating" << std::endl; }
 
 void parseCommandLineOption(CommandLineOpts& opts) {
   int c;
